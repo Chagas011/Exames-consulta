@@ -30,3 +30,16 @@ class Medico(models.Model):
 
     def __str__(self) -> str:
         return self.nome_completo
+
+
+class Paciente(models.Model):
+
+    nome_completo = models.CharField(max_length=75)
+    idade = models.CharField(max_length=20)
+    genero = models.CharField(max_length=20)
+    email = models.EmailField()
+    telefone = models.CharField(max_length=9)
+    data = models.DateField()
+
+    def __str__(self) -> str:
+        return self.nome_completo
