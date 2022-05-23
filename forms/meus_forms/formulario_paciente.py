@@ -1,5 +1,8 @@
 
+import datetime
+
 from consulta.models import Paciente
+from django.core.exceptions import ValidationError
 from django import forms
 
 
@@ -27,13 +30,24 @@ class CadastroPaciente(forms.ModelForm):
         widget=forms.RadioSelect,
         choices=sexos,
     )
-    data = forms.DateField(
-        input_formats='%m/%d/%Y',
-        required=False,
-        widget=forms.TextInput,
+    date = forms.DateTimeField(
+        widget=forms.DateTimeInput(
+            format='%Y-%m-%dT%H:%M',
+            attrs={
+                'type': 'datetime-local',
+            }),
+        input_formats=('%Y-%m-%dT%H:%M',),
     )
 
     class Meta:
         model = Paciente
         fields = 'nome_completo', 'idade', 'genero',\
-            'email', 'telefone', 'data',
+            'email', 'telefone', 'date',
+
+    def clean_data(self):
+        data = self.cleaned_data['date']
+
+        if data < datetime.date.today():
+            raise ValidationError('Data invalida', code='invalid')
+
+        return data

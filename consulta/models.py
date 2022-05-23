@@ -39,7 +39,7 @@ class Paciente(models.Model):
     genero = models.CharField(max_length=20)
     email = models.EmailField()
     telefone = models.CharField(max_length=9)
-    data = models.DateField()
+    date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.nome_completo
