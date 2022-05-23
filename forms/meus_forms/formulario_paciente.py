@@ -1,8 +1,5 @@
 
-import datetime
-
 from consulta.models import Paciente
-from django.core.exceptions import ValidationError
 from django import forms
 
 
@@ -43,11 +40,3 @@ class CadastroPaciente(forms.ModelForm):
         model = Paciente
         fields = 'nome_completo', 'idade', 'genero',\
             'email', 'telefone', 'date',
-
-    def clean_data(self):
-        data = self.cleaned_data['date']
-
-        if data < datetime.date.today():
-            raise ValidationError('Data invalida', code='invalid')
-
-        return data
