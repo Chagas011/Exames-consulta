@@ -1,47 +1,72 @@
+
 from django.db.models import Q
-from django.http import Http404
-from django.shortcuts import get_list_or_404, get_object_or_404, render
-
+from django.shortcuts import get_object_or_404, render
 from .models import Medico
-
+from django.views.generic import ListView, DetailView
 # Create your views here.
 
 
-def home(request):
-    medicos = Medico.objects.filter(
-        publicado=True
-    ).order_by('-id')
+class ListViewBase(ListView):
+    model = Medico
+    context_object_name = 'medicos'
+    ordering = ['-id']
+    template_name = 'consulta/pages/home.html'
+    paginate_by = None
 
-    return render(request, 'consulta/pages/home.html', context={
-        'medicos': medicos
-    })
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(publicado=True,)
 
-
-def especialidade(request, especialidade_id):
-    medicos = get_list_or_404(Medico, publicado=True,
-                              especialidade__id=especialidade_id)
-
-    return render(request, 'consulta/pages/especialidade.html', context={
-        'medicos': medicos
-    })
+        return qs
 
 
-def search(request):
-    search_term = request.GET.get('search', '').strip()
-    if not search_term:
-        raise Http404()
-    medicos = Medico.objects.filter(
-        Q(
-            Q(nome_completo__icontains=search_term) |
-            Q(crm__icontains=search_term),
-        ),
-        publicado=True
-    ).order_by('-id')
+class ListViewEspecialidade(ListViewBase):
+    template_name = 'consulta/pages/especialidade.html'
 
-    return render(request, 'consulta/pages/search.html', context={
-        'search_term': search_term,
-        'medicos': medicos
-    })
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(
+            publicado=True,
+            especialidade__id=self.kwargs.get('especialidade_id'),
+        )
+        return qs
+
+
+class ListViewSearch(ListViewBase):
+    template_name = 'consulta/pages/search.html'
+
+    def get_queryset(self, *args, **kwargs):
+        search_term = self.request.GET.get('search', '').strip()
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(
+            Q(
+                Q(nome_completo__icontains=search_term) |
+                Q(crm__icontains=search_term),
+            ),
+            publicado=True
+        )
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+        search_term = self.request.GET.get('search', '').strip()
+
+        ctx.update({'search_term': search_term})
+        return ctx
+
+
+class MedicoView(DetailView):
+    model = Medico
+    context_object_name = 'medico'
+    template_name = 'consulta/pages/medico.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(
+            publicado=True,
+            pk=self.kwargs.get('id'),
+        )
+        return qs
 
 
 def medico(request, id):

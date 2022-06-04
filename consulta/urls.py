@@ -4,10 +4,10 @@ from . import views
 
 app_name = 'clinica'
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('home/search/', views.search, name='search'),
-    path('home/<int:id>/', views.medico, name='medico'),
+    path('', views.ListViewBase.as_view(), name='home'),
+    path('home/search/', views.ListViewSearch.as_view(), name='search'),
+    path('home/<int:id>/', views.MedicoView.as_view(), name='medico'),
     path('home/especialidade/<int:especialidade_id>/',
-         views.especialidade, name='especialidade'),
+         views.ListViewEspecialidade.as_view(), name='especialidade'),
 
 ]
