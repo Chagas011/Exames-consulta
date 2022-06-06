@@ -1,6 +1,5 @@
 
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
 from .models import Medico
 from django.views.generic import ListView, DetailView
 # Create your views here.
@@ -64,14 +63,6 @@ class MedicoView(DetailView):
         qs = super().get_queryset(*args, **kwargs)
         qs = qs.filter(
             publicado=True,
-            pk=self.kwargs.get('id'),
+            pk=self.kwargs.get('pk'),
         )
         return qs
-
-
-def medico(request, id):
-    medico = get_object_or_404(Medico, publicado=True, pk=id)
-
-    return render(request, 'consulta/pages/medico.html', context={
-        'medico': medico
-    })
