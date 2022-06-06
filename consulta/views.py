@@ -10,7 +10,7 @@ class ListViewBase(ListView):
     context_object_name = 'medicos'
     ordering = ['-id']
     template_name = 'consulta/pages/home.html'
-    paginate_by = None
+    paginate_by = 3
 
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)

@@ -21,12 +21,40 @@
           <a href="{% url 'clinica:medico' medico.id %}" class="btn btn-primary text-decoration-none">Agendar consulta</a>
         </div>
       </div>
+
+     
     </div>
     {% empty %}
         <div class="container">
             <h1>Medicos não encontrados🥲</h1>
         </div>
-
     {% endfor %}
+
+    <div class="container p-3 "> 
+
+     
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item"><a class="page-link" href="?page=1">Primeira</a></li>
+          {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a href="?page={{page_obj.previous_page_number}}" class="page-link text-decoration-none">Anterior</a>
+          </li>
+          {% endif %}
+          
+          {% if page_obj.has_next %}
+          <li class="page-item">        
+            <a href="?page={{page_obj.next_page_number}}" class=" page-link text-decoration-none">Proximo</a>
+          </li>
+          {% endif %}
+
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a></li>
+        </ul>
+      </nav>
+     
+    </div>
   </div>
+
 </div>
+
+
